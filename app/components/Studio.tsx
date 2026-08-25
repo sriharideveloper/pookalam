@@ -97,8 +97,11 @@ export default function Studio() {
       if(spot) form.append('spot',spot.file); form.append('style',style);
       const response=await fetch('/api/generate',{method:'POST',body:form});
       if(response.ok){const data=await response.json() as {image?:string};if(data.image)setResult(data.image);}
-      else await new Promise((resolve)=>setTimeout(resolve,1800));
-    } catch { await new Promise((resolve)=>setTimeout(resolve,1200)); }
+      else {
+        const err = await response.json().catch(()=>({}));
+        alert(`API Error: ${err.error || response.statusText}`);
+      }
+    } catch (e) { alert(`Network error: ${e instanceof Error ? e.message : 'Unknown'}`); }
     setGenerated(true); setGenerating(false);
   };
   const publish = async () => {

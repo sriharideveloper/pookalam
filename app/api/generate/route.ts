@@ -45,5 +45,8 @@ export async function POST(request:Request){
     if(process.env.OPENAI_API_KEY)return Response.json({image:await openai(sketch,spot,style),provider:'OpenAI'});
     
     return Response.json({image:'/images/heavenly-pookalam.png',provider:'demo',demo:true});
-  }catch(error){return Response.json({error:error instanceof Error?error.message:'Generation failed'},{status:502});}
+  }catch(error){
+    console.error('Server generation error:', error);
+    return Response.json({error:error instanceof Error?error.message:'Generation failed'},{status:502});
+  }
 }
