@@ -7,7 +7,7 @@ const instrument = Instrument_Serif({ variable: '--font-instrument', subsets: ['
 const malayalam = Noto_Serif_Malayalam({ variable: '--font-malayalam', subsets: ['malayalam'], weight: ['400', '600'] });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://poovili-ai-pookalam.sites.openai.com'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://poovili-ai-pookalam.sriharimuralikrishna.chatgpt.site'),
   title: { default:'Poovili — AI Pookalam Studio', template:'%s · Poovili' },
   description: 'Rough aayi draw cheyyu. AI use cheythu next-level realistic Kerala pookalam create, place, publish, and share cheyyu.',
   keywords: ['AI pookalam generator','Onam pookalam design','Kerala flower rangoli','pookalam ideas','Malayalam AI'],
