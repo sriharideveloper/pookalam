@@ -41,9 +41,8 @@ export async function POST(request:Request){
   try{
     const form=await request.formData();const sketch=form.get('sketch') as File|null;const spot=form.get('spot') as File|null;const style=String(form.get('style')||'Classic Kerala');
     
-    // Make OpenAI primary and disable Gemini for now
+    if(process.env.GEMINI_API_KEY)return Response.json({image:await gemini(sketch,spot,style),provider:'Nano Banana 2'});
     if(process.env.OPENAI_API_KEY)return Response.json({image:await openai(sketch,spot,style),provider:'OpenAI'});
-    // if(process.env.GEMINI_API_KEY)return Response.json({image:await gemini(sketch,spot,style),provider:'Nano Banana 2'});
     
     return Response.json({image:'/images/heavenly-pookalam.png',provider:'demo',demo:true});
   }catch(error){return Response.json({error:error instanceof Error?error.message:'Generation failed'},{status:502});}
