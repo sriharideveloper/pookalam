@@ -3,13 +3,13 @@ import { ImageResponse } from 'next/og';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-const logoData=`data:image/png;base64,${readFileSync(join(process.cwd(),'public','images','poovili-logo.png')).toString('base64')}`;
-
 export const socialAlt='Poovili — Ninte imagination, poovayi viriyatte. AI Pookalam Studio.';
 export const socialSize={width:1200,height:630};
 export const socialContentType='image/png';
 
 export function createSocialCard(){
+  const logoData=`data:image/png;base64,${readFileSync(join(process.cwd(),'public','images','poovili-logo.png')).toString('base64')}`;
+
   return new ImageResponse(<div style={{width:'100%',height:'100%',display:'flex',position:'relative',overflow:'hidden',background:'linear-gradient(125deg,#fff1a9 0%,#ffd5cc 43%,#d8efd4 72%,#d7eaf2 100%)',color:'#263b2d',fontFamily:'serif'}}>
     <div style={{position:'absolute',width:520,height:520,borderRadius:999,right:-80,top:56,background:'linear-gradient(145deg,rgba(229,47,118,.28),rgba(246,174,37,.36),rgba(46,151,105,.26))',filter:'blur(30px)'}} />
     <div style={{display:'flex',flexDirection:'column',justifyContent:'center',padding:'68px 0 62px 78px',width:'64%'}}>

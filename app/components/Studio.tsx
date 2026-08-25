@@ -62,7 +62,8 @@ export default function Studio() {
 
   const begin = (event:PointerEvent<HTMLCanvasElement>) => {
     event.currentTarget.setPointerCapture(event.pointerId);
-    setHistory((items) => [...items.slice(-9), event.currentTarget.toDataURL()]);
+    const snapshot = event.currentTarget.toDataURL();
+    setHistory((items) => [...items.slice(-9), snapshot]);
     const p=point(event); setLast(p); setDrawing(true); drawSegment(p,{x:p.x+.1,y:p.y+.1});
   };
   const move = (event:PointerEvent<HTMLCanvasElement>) => { if (!drawing || !last) return; const next=point(event); drawSegment(last,next);setLast(next); };
