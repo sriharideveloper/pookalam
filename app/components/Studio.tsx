@@ -23,16 +23,24 @@ export default function Studio() {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+    let isFirst = true;
     const resize = () => {
       const rect = canvas.getBoundingClientRect();
-      const snapshot = canvas.width ? canvas.toDataURL() : '';
+      let snapshot = canvas.width ? canvas.toDataURL() : '';
+      if (isFirst) {
+        try { const saved = localStorage.getItem('pookalam_sketch'); if (saved) snapshot = saved; } catch (e) {}
+      }
+      isFirst = false;
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       canvas.width = rect.width * dpr;
       canvas.height = rect.height * dpr;
       const ctx = canvas.getContext('2d');
       if (ctx) ctx.scale(dpr, dpr);
       if (snapshot) {
-        const image = new Image(); image.onload = () => ctx?.drawImage(image, 0, 0, rect.width, rect.height); image.src = snapshot;
+        const image = new Image(); image.onload = () => {
+          ctx?.drawImage(image, 0, 0, rect.width, rect.height);
+          setHistory((h) => h.length ? h : [snapshot]);
+        }; image.src = snapshot;
       }
     };
     resize(); window.addEventListener('resize', resize); return () => window.removeEventListener('resize', resize);
@@ -60,6 +68,13 @@ export default function Studio() {
     }
   };
 
+  const saveToStorage = () => {
+    const canvas = canvasRef.current;
+    if (canvas) {
+      try { localStorage.setItem('pookalam_sketch', canvas.toDataURL()); } catch (e) {}
+    }
+  };
+
   const begin = (event:PointerEvent<HTMLCanvasElement>) => {
     event.currentTarget.setPointerCapture(event.pointerId);
     const snapshot = event.currentTarget.toDataURL();
@@ -67,11 +82,11 @@ export default function Studio() {
     const p=point(event); setLast(p); setDrawing(true); drawSegment(p,{x:p.x+.1,y:p.y+.1});
   };
   const move = (event:PointerEvent<HTMLCanvasElement>) => { if (!drawing || !last) return; const next=point(event); drawSegment(last,next);setLast(next); };
-  const end = () => { setDrawing(false); setLast(null); };
-  const clear = () => { const c=canvasRef.current; c?.getContext('2d')?.clearRect(0,0,c.width,c.height); setHistory([]); };
+  const end = () => { setDrawing(false); setLast(null); saveToStorage(); };
+  const clear = () => { const c=canvasRef.current; c?.getContext('2d')?.clearRect(0,0,c.width,c.height); setHistory([]); try { localStorage.removeItem('pookalam_sketch'); } catch (e) {} };
   const undo = () => {
     const canvas=canvasRef.current; const previous=history.at(-1); if(!canvas||!previous)return;
-    const ctx=canvas.getContext('2d'); const image=new Image(); image.onload=()=>{ctx?.clearRect(0,0,canvas.width,canvas.height);ctx?.drawImage(image,0,0,canvas.getBoundingClientRect().width,canvas.getBoundingClientRect().height)};image.src=previous;setHistory((h)=>h.slice(0,-1));
+    const ctx=canvas.getContext('2d'); const image=new Image(); image.onload=()=>{ctx?.clearRect(0,0,canvas.width,canvas.height);ctx?.drawImage(image,0,0,canvas.getBoundingClientRect().width,canvas.getBoundingClientRect().height); saveToStorage();};image.src=previous;setHistory((h)=>h.slice(0,-1));
   };
   const onSpot = (event:ChangeEvent<HTMLInputElement>) => { const file=event.target.files?.[0]; if(file)setSpot({file,url:URL.createObjectURL(file)}); };
   const generate = async () => {
