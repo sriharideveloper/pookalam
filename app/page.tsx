@@ -2,19 +2,42 @@ import Studio from './components/Studio';
 import ShareActions from './components/ShareActions';
 import Image from 'next/image';
 
+import { unstable_noStore as noStore } from 'next/cache';
+
 const petals = (count:number) => Array.from({length:count});
-const gallery = [
-  {title:'Thiruvona Thaaram',author:'Meera K.',likes:'1.2k',crop:'center 70%',tag:'TRADITIONAL'},
-  {title:'Mazhavillu',author:'Arjun P.',likes:'864',crop:'left 58%',tag:'VIBRANT'},
-  {title:'Kasavu Bloom',author:'Diya N.',likes:'532',crop:'right 65%',tag:'MINIMAL'},
-  {title:'Nilaavu',author:'Nikhil V.',likes:'417',crop:'center 35%',tag:'DREAMY'},
-];
+
+type Pookalam = {
+  id: string;
+  title: string;
+  author_name: string;
+  likes: number;
+  style: string;
+  image_url: string;
+};
+
+async function getPookalams(): Promise<Pookalam[]> {
+  noStore();
+  const base = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!base || !key) return [];
+  try {
+    const res = await fetch(`${base}/rest/v1/pookalams?select=*&order=created_at.desc&limit=8`, {
+      headers: { apikey: key, authorization: `Bearer ${key}` }
+    });
+    if (res.ok) return await res.json();
+  } catch (e) {
+    console.error('Supabase fetch failed:', e);
+  }
+  return [];
+}
 
 function PookalamMark({small=false}:{small?:boolean}) {
   return <span className={`brand-mark ${small?'small':''}`} aria-hidden="true"><Image src="/images/poovili-logo.png" width={small?34:44} height={small?34:44} alt="" priority={!small} /></span>;
 }
 
-export default function Home() {
+export default async function Home() {
+  const gallery = await getPookalams();
+
   return (
     <main>
       <header className="site-nav">
@@ -34,7 +57,6 @@ export default function Home() {
           <p className="hero-sub">ഒരു ചെറിയ വര. ഒരു മനോഹര പൂക്കളം.</p>
           <p className="hero-body">Rough aayi draw cheyyu. Ninte space upload cheyyu. Pinne, nammude AI athine next-level realistic pookalam aakkum.</p>
           <div className="hero-actions"><a className="primary-btn" href="#studio">Create your pookalam <span>✦</span></a><a className="text-link" href="#explore">Community designs <span>↘</span></a></div>
-          <div className="trust-row"><div className="mini-stack"><span>🌼</span><span>🌸</span><span>🌺</span></div><p><strong>2,400+ designs</strong><br />made with sneham</p></div>
         </div>
         <div className="hero-art" aria-label="A dreamy flower pookalam illustration">
           <div className="orbit orbit-one"><span>✿</span><span>❀</span><span>✦</span></div><div className="orbit orbit-two"><span>✿</span><span>❀</span><span>✦</span></div>
@@ -72,8 +94,17 @@ export default function Home() {
       <section className="explore" id="explore">
         <div className="rainbow-wash" />
         <div className="explore-head"><div><span className="section-kicker">POOVILI COMMUNITY</span><h2>Lokam muzhuvan<br /><em>poothu nilkkatte.</em></h2></div><div><p>Malayalikalude imagination, oru beautiful gallery-il.</p><a href="#studio">Create yours ↗</a></div></div>
-        <div className="gallery-grid">{gallery.map((item,index)=><article className={`gallery-card card-${index+1}`} key={item.title}><div className="gallery-image"><img src="/images/heavenly-pookalam.png" alt={`${item.title} community pookalam`} style={{objectPosition:item.crop}}/><span>{item.tag}</span><button aria-label={`Like ${item.title}`}>♡</button></div><div className="gallery-meta"><div><h3>{item.title}</h3><p>by {item.author}</p></div><span>♥ {item.likes}</span></div></article>)}</div>
-        <button className="load-more">Iniyum kaanikkoo <span>↓</span></button>
+        {gallery.length > 0 ? (
+          <>
+            <div className="gallery-grid">{gallery.map((item,index)=><article className={`gallery-card card-${(index%4)+1}`} key={item.id}><div className="gallery-image"><img src={item.image_url} alt={`${item.title} community pookalam`} style={{objectPosition:'center'}}/><span>{item.style?.toUpperCase()||'POOKALAM'}</span><button aria-label={`Like ${item.title}`}>♡</button></div><div className="gallery-meta"><div><h3>{item.title}</h3><p>by {item.author_name}</p></div><span>♥ {item.likes}</span></div></article>)}</div>
+            <button className="load-more">Iniyum kaanikkoo <span>↓</span></button>
+          </>
+        ) : (
+          <div style={{ textAlign: 'center', padding: '120px 20px', color: '#78776e' }}>
+            <p style={{ fontSize: '14px', marginBottom: '8px' }}>No pookalams published yet.</p>
+            <p style={{ fontSize: '12px' }}>Be the first to create and share yours with the community!</p>
+          </div>
+        )}
       </section>
 
       <section className="quote-section"><div className="quote-flower">❀</div><p className="malayalam-quote">“പൂക്കളം ഒരു ചിത്രം മാത്രമല്ല.<br />ഒരുമിച്ചിരിക്കുന്നതിന്റെ ഓർമ്മയാണ്.”</p><span>A POOKALAM ISN&apos;T JUST A DESIGN. IT&apos;S A MEMORY OF TOGETHERNESS.</span></section>
