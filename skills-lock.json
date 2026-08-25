@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "scrollcraft": {
+      "source": "nateherkai/scroll-craft",
+      "sourceType": "github",
+      "skillPath": "plugins/nateherk-design/skills/scrollcraft/SKILL.md",
+      "computedHash": "b60fa7d106a7426747e0fdf0eb1dfa1437110305c13405feb44efabde07c93cb"
+    }
+  }
+}
