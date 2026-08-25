@@ -1,4 +1,6 @@
 import Studio from './components/Studio';
+import ShareActions from './components/ShareActions';
+import Image from 'next/image';
 
 const petals = (count:number) => Array.from({length:count});
 const gallery = [
@@ -9,7 +11,7 @@ const gallery = [
 ];
 
 function PookalamMark({small=false}:{small?:boolean}) {
-  return <span className={`brand-mark ${small?'small':''}`} aria-hidden="true"><i /><i /><i /><i /><b /></span>;
+  return <span className={`brand-mark ${small?'small':''}`} aria-hidden="true"><Image src="/images/poovili-logo.png" width={small?34:44} height={small?34:44} alt="" priority={!small} /></span>;
 }
 
 export default function Home() {
@@ -20,6 +22,7 @@ export default function Home() {
         <nav aria-label="Main navigation"><a href="#studio">Studio</a><a href="#explore">Explore</a><a href="#how">Engane?</a></nav>
         <a className="nav-cta" href="#studio">Pookalam thudangam <span>↗</span></a>
       </header>
+      <ShareActions floating />
 
       <section className="hero" id="top">
         <div className="cloud cloud-one" /><div className="cloud cloud-two" />

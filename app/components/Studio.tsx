@@ -1,6 +1,7 @@
 'use client';
 
 import { ChangeEvent, PointerEvent, useEffect, useRef, useState } from 'react';
+import ShareActions from './ShareActions';
 
 const colors = ['#e85d45', '#f0bf42', '#d63b78', '#397452', '#f0933f', '#f7e7b1'];
 
@@ -126,7 +127,7 @@ export default function Studio() {
       </div>
 
       {(generating || generated) && <div className="result-stage" aria-live="polite">
-        <div className="result-copy"><span className="mini-label">YOUR BLOOM</span><h3>{generating?'Oro poovum place cheyyunnu...':'Ithaanu ninte pookalam.'}</h3><p>{generating?'Geometry, petals, light — ellam ninte sketch-ne follow cheythu varunnu.':'Zoom cheyyu, share cheyyu, allel community-il publish cheyyu.'}</p>{generated&&<div className="result-actions"><button onClick={publish} disabled={publishStatus==='working'}>{publishStatus==='working'?'Publishing...':'Publish to Explore ↗'}</button><a href={result} download="ente-pookalam.png">Download ↓</a></div>}{publishStatus==='published'&&<div className="publish-toast">✦ Published with sneham! Explorer-il live aanu.</div>}{publishStatus==='demo'&&<div className="publish-toast">✦ Demo publish ready. Supabase keys add cheythal public aakum.</div>}{publishStatus==='error'&&<div className="publish-toast error">Publish pattiyilla — keys and schema onn check cheyyu.</div>}</div>
+        <div className="result-copy"><span className="mini-label">YOUR BLOOM</span><h3>{generating?'Oro poovum place cheyyunnu...':'Ithaanu ninte pookalam.'}</h3><p>{generating?'Geometry, petals, light — ellam ninte sketch-ne follow cheythu varunnu.':'Zoom cheyyu, share cheyyu, allel community-il publish cheyyu.'}</p>{generated&&<><div className="result-actions"><button onClick={publish} disabled={publishStatus==='working'}>{publishStatus==='working'?'Publishing...':'Publish to Explore ↗'}</button><a href={result} download="ente-pookalam.png">Download ↓</a></div><ShareActions compact /></>}{publishStatus==='published'&&<div className="publish-toast">✦ Published with sneham! Explorer-il live aanu.</div>}{publishStatus==='demo'&&<div className="publish-toast">✦ Demo publish ready. Supabase keys add cheythal public aakum.</div>}{publishStatus==='error'&&<div className="publish-toast error">Publish pattiyilla — keys and schema onn check cheyyu.</div>}</div>
         <div className={`result-image ${generating?'is-generating':''}`}><img src={result} alt="Generated realistic Kerala pookalam in a sunlit courtyard" /><div className="scan-line" /><span className="result-badge">{generating?'AI BLOOMING':'HIGH DETAIL · READY'}</span></div>
       </div>}
     </div>

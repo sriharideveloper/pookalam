@@ -1,0 +1,2 @@
+import type { MetadataRoute } from 'next';
+export default function manifest():MetadataRoute.Manifest{return{name:'Poovili — AI Pookalam Studio',short_name:'Poovili',description:'Sketch, place and bloom realistic Kerala pookalams with AI.',start_url:'/',display:'standalone',background_color:'#fff8df',theme_color:'#d72d7d',icons:[{src:'/images/poovili-logo.png',sizes:'1024x1024',type:'image/png'}]}}

@@ -12,10 +12,23 @@ export const metadata: Metadata = {
   title: { default:'Poovili — AI Pookalam Studio', template:'%s · Poovili' },
   description: 'Rough aayi draw cheyyu. AI use cheythu next-level realistic Kerala pookalam create, place, publish, and share cheyyu.',
   keywords: ['AI pookalam generator','Onam pookalam design','Kerala flower rangoli','pookalam ideas','Malayalam AI'],
-  openGraph: { title:'Poovili — Ninte imagination, poovayi viriyatte', description:'Sketch, place, and bloom a realistic pookalam with AI.', images:[{url:'/og.png',width:1536,height:1024,alt:'Poovili realistic pookalam in a Kerala courtyard'}],type:'website' },
-  twitter: { card:'summary_large_image', title:'Poovili — AI Pookalam Studio', description:'Oru line-il ninnu, oru lokam vare.', images:['/og.png'] },
+  applicationName:'Poovili',
+  authors:[{name:'Poovili'}], creator:'Poovili', publisher:'Poovili', category:'Design',
+  alternates:{canonical:'/'},
+  robots:{index:true,follow:true,googleBot:{index:true,follow:true,'max-image-preview':'large','max-snippet':-1,'max-video-preview':-1}},
+  icons:{icon:'/images/poovili-logo.png',shortcut:'/images/poovili-logo.png',apple:'/images/poovili-logo.png'},
+  manifest:'/manifest.webmanifest',
+  openGraph: { title:'Poovili — Ninte imagination, poovayi viriyatte', description:'Sketch, place, and bloom a realistic Kerala pookalam with AI.',url:'/',siteName:'Poovili',locale:'ml_IN',alternateLocale:['en_IN'],type:'website' },
+  twitter: { card:'summary_large_image', title:'Poovili — AI Pookalam Studio', description:'Oru line-il ninnu, oru lokam vare.' },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="ml"><body className={`${poppins.variable} ${instrument.variable} ${malayalam.variable}`}>{children}</body></html>;
+  const structuredData={
+    '@context':'https://schema.org','@type':'WebApplication',name:'Poovili',url:productionUrl,
+    description:'AI-powered Kerala pookalam sketching, placement and publishing studio.',
+    applicationCategory:'DesignApplication',operatingSystem:'Web',inLanguage:['ml','en-IN'],
+    image:`${productionUrl}/opengraph-image`,logo:`${productionUrl}/images/poovili-logo.png`,
+    offers:{'@type':'Offer',price:'0',priceCurrency:'INR'},
+  };
+  return <html lang="ml"><body className={`${poppins.variable} ${instrument.variable} ${malayalam.variable}`}><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(structuredData)}} />{children}</body></html>;
 }
