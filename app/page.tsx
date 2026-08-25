@@ -23,6 +23,8 @@ export default function Home() {
 
       <section className="hero" id="top">
         <div className="cloud cloud-one" /><div className="cloud cloud-two" />
+        <div className="aurora aurora-one" /><div className="aurora aurora-two" />
+        <div className="petal-sky" aria-hidden="true">{petals(14).map((_,i)=><i key={i} style={{'--p':i} as React.CSSProperties}>{i%3===0?'✿':i%3===1?'●':'◆'}</i>)}</div>
         <div className="hero-copy">
           <div className="eyebrow"><span>✦</span> Onam, reimagined with AI</div>
           <h1>Ninte imagination.<br /><em>Poovayi viriyatte.</em></h1>
@@ -39,7 +41,10 @@ export default function Home() {
         <div className="scroll-cue"><span>SCROLL TO BLOOM</span><i>↓</i></div>
       </section>
 
+      <div className="bloom-marquee" aria-label="Poovili creative features"><div><span>SKETCH</span><i>✿</i><span>PLACE</span><i>✦</i><span>BLOOM</span><i>❀</i><span>SHARE</span><i>✦</i><span>ONAM</span><i>✿</i><span>SKETCH</span><i>❀</i><span>PLACE</span><i>✦</i><span>BLOOM</span></div></div>
+
       <section className="studio-intro" id="studio">
+        <div className="color-orb studio-orb-one" /><div className="color-orb studio-orb-two" />
         <div className="floral-divider">✦　❀　✦</div><div className="section-kicker">YOUR CANVAS</div>
         <h2>Oru line-il ninnu,<br /><em>oru lokam vare.</em></h2>
         <p>Perfect aavanam ennilla. Just start drawing — baaki magic njangal cheyyam.</p>
@@ -47,6 +52,7 @@ export default function Home() {
       </section>
 
       <section className="how-section" id="how">
+        <div className="floating-sprig sprig-one">✿<span>✦</span>❀</div>
         <div className="how-heading"><div><span className="section-kicker">SIMPLE AANU</span><h2>Moonnu cheriya steps.<br /><em>Unlimited magic.</em></h2></div><p>Traditional pookalam craftum, powerful image AI-yum orumichu. Ninte idea thanne hero.</p></div>
         <div className="steps-line">
           <article><span>01</span><div className="step-icon sketch-icon">⌁</div><h3>Rough aayi varaykku</h3><p>Circles, petals, random lines — neat aavanam ennilla.</p></article>
@@ -61,6 +67,7 @@ export default function Home() {
       </section>
 
       <section className="explore" id="explore">
+        <div className="rainbow-wash" />
         <div className="explore-head"><div><span className="section-kicker">POOVILI COMMUNITY</span><h2>Lokam muzhuvan<br /><em>poothu nilkkatte.</em></h2></div><div><p>Malayalikalude imagination, oru beautiful gallery-il.</p><a href="#studio">Create yours ↗</a></div></div>
         <div className="gallery-grid">{gallery.map((item,index)=><article className={`gallery-card card-${index+1}`} key={item.title}><div className="gallery-image"><img src="/images/heavenly-pookalam.png" alt={`${item.title} community pookalam`} style={{objectPosition:item.crop}}/><span>{item.tag}</span><button aria-label={`Like ${item.title}`}>♡</button></div><div className="gallery-meta"><div><h3>{item.title}</h3><p>by {item.author}</p></div><span>♥ {item.likes}</span></div></article>)}</div>
         <button className="load-more">Iniyum kaanikkoo <span>↓</span></button>
@@ -68,7 +75,7 @@ export default function Home() {
 
       <section className="quote-section"><div className="quote-flower">❀</div><p className="malayalam-quote">“പൂക്കളം ഒരു ചിത്രം മാത്രമല്ല.<br />ഒരുമിച്ചിരിക്കുന്നതിന്റെ ഓർമ്മയാണ്.”</p><span>A POOKALAM ISN&apos;T JUST A DESIGN. IT&apos;S A MEMORY OF TOGETHERNESS.</span></section>
 
-      <section className="final-cta"><div className="cta-orbit"><i>✿</i><i>✦</i><i>❀</i></div><PookalamMark /><span className="section-kicker">THIS ONAM</span><h2>Ninte pookalam<br /><em>ivide thudangunnu.</em></h2><p>No design skills venda. Oru idea mathi.</p><a className="primary-btn" href="#studio">Start creating — free <span>✦</span></a></section>
+      <section className="final-cta"><div className="cta-orbit"><i>✿</i><i>✦</i><i>❀</i></div><div className="petal-sky cta-petals" aria-hidden="true">{petals(10).map((_,i)=><i key={i} style={{'--p':i} as React.CSSProperties}>{i%2?'✦':'✿'}</i>)}</div><PookalamMark /><span className="section-kicker">THIS ONAM</span><h2>Ninte pookalam<br /><em>ivide thudangunnu.</em></h2><p>No design skills venda. Oru idea mathi.</p><a className="primary-btn" href="#studio">Start creating — free <span>✦</span></a></section>
 
       <footer><a className="brand" href="#top"><PookalamMark small/><span>Poovili</span></a><p>Made with <span>♥</span> in Kerala, for Malayalis everywhere.</p><div><a href="#studio">Studio</a><a href="#explore">Explore</a><a href="mailto:hello@poovili.in">Contact</a></div><small>© 2026 POOVILI</small></footer>
     </main>

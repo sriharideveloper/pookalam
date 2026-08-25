@@ -5,9 +5,10 @@ import './globals.css';
 const poppins = Poppins({ variable: '--font-poppins', subsets: ['latin'], weight: ['400', '500', '600', '700'] });
 const instrument = Instrument_Serif({ variable: '--font-instrument', subsets: ['latin'], weight: ['400'], style: ['normal', 'italic'] });
 const malayalam = Noto_Serif_Malayalam({ variable: '--font-malayalam', subsets: ['malayalam'], weight: ['400', '600'] });
+const productionUrl = process.env.NEXT_PUBLIC_SITE_URL || (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : 'https://poovili-ai-pookalam.sriharimuralikrishna.chatgpt.site');
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://poovili-ai-pookalam.sriharimuralikrishna.chatgpt.site'),
+  metadataBase: new URL(productionUrl),
   title: { default:'Poovili — AI Pookalam Studio', template:'%s · Poovili' },
   description: 'Rough aayi draw cheyyu. AI use cheythu next-level realistic Kerala pookalam create, place, publish, and share cheyyu.',
   keywords: ['AI pookalam generator','Onam pookalam design','Kerala flower rangoli','pookalam ideas','Malayalam AI'],

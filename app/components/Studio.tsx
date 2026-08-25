@@ -16,7 +16,7 @@ export default function Studio() {
   const [result, setResult] = useState('/images/heavenly-pookalam.png');
   const [generating, setGenerating] = useState(false);
   const [generated, setGenerated] = useState(false);
-  const [published, setPublished] = useState(false);
+  const [publishStatus, setPublishStatus] = useState<'idle'|'working'|'published'|'demo'|'error'>('idle');
   const [style, setStyle] = useState('Classic Kerala');
 
   useEffect(() => {
@@ -73,20 +73,23 @@ export default function Studio() {
   };
   const onSpot = (event:ChangeEvent<HTMLInputElement>) => { const file=event.target.files?.[0]; if(file)setSpot({file,url:URL.createObjectURL(file)}); };
   const generate = async () => {
-    setGenerating(true); setGenerated(false); setPublished(false);
+    setGenerating(true); setGenerated(false); setPublishStatus('idle');
     try {
       const canvas=canvasRef.current; const form=new FormData();
       if(canvas) { const blob=await new Promise<Blob|null>((resolve)=>canvas.toBlob(resolve,'image/png')); if(blob)form.append('sketch',blob,'sketch.png'); }
       if(spot) form.append('spot',spot.file); form.append('style',style);
       const response=await fetch('/api/generate',{method:'POST',body:form});
-      if(response.ok){const data=await response.json();if(data.image)setResult(data.image);}
+      if(response.ok){const data=await response.json() as {image?:string};if(data.image)setResult(data.image);}
       else await new Promise((resolve)=>setTimeout(resolve,1800));
     } catch { await new Promise((resolve)=>setTimeout(resolve,1200)); }
     setGenerated(true); setGenerating(false);
   };
   const publish = async () => {
-    try { await fetch('/api/publish',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({title:'Ente Onam Bloom',image:result,style})}); } catch {}
-    setPublished(true);
+    setPublishStatus('working');
+    try {
+      const response=await fetch('/api/publish',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({title:'Ente Onam Bloom',image:result,style})});
+      if(!response.ok)throw new Error('Publish failed');const data=await response.json() as {demo?:boolean};setPublishStatus(data.demo?'demo':'published');
+    } catch { setPublishStatus('error'); }
   };
 
   return (
@@ -123,7 +126,7 @@ export default function Studio() {
       </div>
 
       {(generating || generated) && <div className="result-stage" aria-live="polite">
-        <div className="result-copy"><span className="mini-label">YOUR BLOOM</span><h3>{generating?'Oro poovum place cheyyunnu...':'Ithaanu ninte pookalam.'}</h3><p>{generating?'Geometry, petals, light — ellam ninte sketch-ne follow cheythu varunnu.':'Zoom cheyyu, share cheyyu, allel community-il publish cheyyu.'}</p>{generated&&<div className="result-actions"><button onClick={publish}>Publish to Explore ↗</button><a href={result} download="ente-pookalam.png">Download ↓</a></div>}{published&&<div className="publish-toast">✦ Published with sneham! Explorer-il live aanu.</div>}</div>
+        <div className="result-copy"><span className="mini-label">YOUR BLOOM</span><h3>{generating?'Oro poovum place cheyyunnu...':'Ithaanu ninte pookalam.'}</h3><p>{generating?'Geometry, petals, light — ellam ninte sketch-ne follow cheythu varunnu.':'Zoom cheyyu, share cheyyu, allel community-il publish cheyyu.'}</p>{generated&&<div className="result-actions"><button onClick={publish} disabled={publishStatus==='working'}>{publishStatus==='working'?'Publishing...':'Publish to Explore ↗'}</button><a href={result} download="ente-pookalam.png">Download ↓</a></div>}{publishStatus==='published'&&<div className="publish-toast">✦ Published with sneham! Explorer-il live aanu.</div>}{publishStatus==='demo'&&<div className="publish-toast">✦ Demo publish ready. Supabase keys add cheythal public aakum.</div>}{publishStatus==='error'&&<div className="publish-toast error">Publish pattiyilla — keys and schema onn check cheyyu.</div>}</div>
         <div className={`result-image ${generating?'is-generating':''}`}><img src={result} alt="Generated realistic Kerala pookalam in a sunlit courtyard" /><div className="scan-line" /><span className="result-badge">{generating?'AI BLOOMING':'HIGH DETAIL · READY'}</span></div>
       </div>}
     </div>

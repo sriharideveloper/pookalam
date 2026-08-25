@@ -1,4 +1,5 @@
 const PROMPT = `Transform the supplied rough mandala sketch into a physically realistic Kerala pookalam made from thousands of fresh individual flower petals. Preserve the sketch's geometry and radial rhythm. If a location photo is supplied, place the pookalam naturally on that exact floor with correct perspective, scale, contact shadows and scene lighting. Use marigold yellow, saffron orange, hibiscus coral, magenta, ivory jasmine and leaf green. Kerala Onam authenticity, intricate hand-laid petal texture, tiny organic imperfections, cinematic diffused daylight, refined anime-film atmosphere but photoreal materials. No people, no text, no watermark, no plastic flowers.`;
+type GeminiPart = {text:string} | {inlineData:{mimeType:string;data:string}};
 
 const toBase64 = (buffer:ArrayBuffer) => {
   const bytes=new Uint8Array(buffer); let binary='';
@@ -8,11 +9,11 @@ const toBase64 = (buffer:ArrayBuffer) => {
 const filePart = async (file:File) => ({ inlineData:{ mimeType:file.type || 'image/png', data:toBase64(await file.arrayBuffer()) } });
 
 async function gemini(sketch:File|null, spot:File|null, style:string) {
-  const parts:any[]=[{text:`${PROMPT}\nVisual direction: ${style}.`}];
+  const parts:GeminiPart[]=[{text:`${PROMPT}\nVisual direction: ${style}.`}];
   if(sketch?.size)parts.push(await filePart(sketch)); if(spot?.size)parts.push(await filePart(spot));
   const response=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-image:generateContent',{method:'POST',headers:{'content-type':'application/json','x-goog-api-key':process.env.GEMINI_API_KEY!},body:JSON.stringify({contents:[{role:'user',parts}],generationConfig:{responseModalities:['TEXT','IMAGE']}})});
-  if(!response.ok)throw new Error(`Gemini ${response.status}`); const data=await response.json();
-  const image=data.candidates?.[0]?.content?.parts?.find((part:any)=>part.inlineData)?.inlineData;
+  if(!response.ok)throw new Error(`Gemini ${response.status}`); const data=await response.json() as {candidates?:Array<{content?:{parts?:Array<{inlineData?:{mimeType?:string;data:string}}>} }>};
+  const image=data.candidates?.[0]?.content?.parts?.find((part)=>part.inlineData)?.inlineData;
   if(!image)throw new Error('No image returned'); return `data:${image.mimeType || 'image/png'};base64,${image.data}`;
 }
 
@@ -25,7 +26,7 @@ async function openai(sketch:File|null, spot:File|null, style:string) {
   } else {
     response=await fetch('https://api.openai.com/v1/images/generations',{method:'POST',headers:{authorization:`Bearer ${process.env.OPENAI_API_KEY}`,'content-type':'application/json'},body:JSON.stringify({model:'gpt-image-2',prompt:`${PROMPT}\nVisual direction: ${style}.`,size:'1536x1024',quality:'high'})});
   }
-  if(!response.ok)throw new Error(`OpenAI ${response.status}`);const data=await response.json();const image=data.data?.[0]?.b64_json;if(!image)throw new Error('No image returned');return `data:image/png;base64,${image}`;
+  if(!response.ok)throw new Error(`OpenAI ${response.status}`);const data=await response.json() as {data?:Array<{b64_json?:string}>};const image=data.data?.[0]?.b64_json;if(!image)throw new Error('No image returned');return `data:image/png;base64,${image}`;
 }
 
 export async function POST(request:Request){
